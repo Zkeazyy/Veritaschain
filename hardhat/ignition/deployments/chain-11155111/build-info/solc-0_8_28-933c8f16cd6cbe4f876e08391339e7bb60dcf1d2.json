@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-933c8f16cd6cbe4f876e08391339e7bb60dcf1d2",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/DocumentRegistry.sol": "project/contracts/DocumentRegistry.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/DocumentRegistry.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.28;\r\n\r\ncontract DocumentRegistry {\r\n    event DocumentAnchored(bytes32 indexed docHash, address indexed author, uint256 timestamp);\r\n\r\n    struct Proof {\r\n        address author;\r\n        uint256 timestamp;\r\n    }\r\n\r\n    mapping(bytes32 => Proof) public proofs;\r\n\r\n    function anchor(bytes32 docHash) external {\r\n        require(docHash != bytes32(0), \"Empty hash\");\r\n        require(proofs[docHash].timestamp == 0, \"Already anchored\");\r\n        proofs[docHash] = Proof(msg.sender, block.timestamp);\r\n        emit DocumentAnchored(docHash, msg.sender, block.timestamp);\r\n    }\r\n\r\n    function verify(bytes32 docHash) external view returns (address author, uint256 timestamp) {\r\n        Proof memory p = proofs[docHash];\r\n        return (p.author, p.timestamp);\r\n    }\r\n}\r\n"
+      }
+    }
+  }
+}

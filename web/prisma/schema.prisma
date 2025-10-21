@@ -1,0 +1,70 @@
+// This is your Prisma schema file for VeritasChain
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Document model - stores anchored documents
+model Document {
+  id        String   @id @default(uuid())
+  hash      String   @unique // SHA-256 hash (0x...)
+  fileName  String
+  fileSize  Int?
+  mimeType  String?
+  
+  // Blockchain data
+  txHash    String   @unique // Transaction hash
+  author    String   // Ethereum address
+  timestamp BigInt   // Block timestamp
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  certificates Certificate[]
+  
+  @@index([hash])
+  @@index([txHash])
+  @@index([author])
+  @@map("documents")
+}
+
+// Certificate model - stores generated certificates
+model Certificate {
+  id         String   @id @default(uuid())
+  documentId String
+  
+  // Certificate data
+  pdfUrl     String?  // Optional: URL to stored PDF
+  qrCode     String?  // Optional: QR code data
+  
+  // Metadata
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  
+  @@index([documentId])
+  @@map("certificates")
+}
+
+// User model - optional for future authentication
+model User {
+  id            String   @id @default(uuid())
+  email         String?  @unique
+  ethereumAddress String @unique
+  
+  // Metadata
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([ethereumAddress])
+  @@map("users")
+}

@@ -1,0 +1,93 @@
+# ==============================
+# VERITASCHAIN - CONFIGURATION COMPLÈTE
+# Template pour .env.local
+# ==============================
+
+# ==============================
+# SUPABASE DATABASE
+# ==============================
+# Récupérez sur supabase.com → Votre projet → Settings → Database → Connection String (URI)
+# ⚠️ IMPORTANT: Encodez les caractères spéciaux dans le mot de passe
+# ! → %21    / → %2F    @ → %40    # → %23    $ → %24    % → %25
+DATABASE_URL="postgresql://postgres:VOTRE_MOT_DE_PASSE_ENCODE@db.xxxxx.supabase.co:5432/postgres?sslmode=require"
+TZ="UTC"
+
+# ==============================
+# VERCEL CONFIGURATION
+# ==============================
+# Token: vercel.com/account/tokens → Create Token
+VERCEL_TOKEN="vercel_xxx..."
+
+# Project ID: vercel.com → Votre projet → Settings → General
+VERCEL_PROJECT_ID="prj_xxx..."
+
+# Team ID (optionnel si projet dans une Team)
+# VERCEL_TEAM_ID="team_xxx..."
+
+# Deploy Hook (optionnel mais recommandé)
+# Settings → Git → Deploy Hooks → Create Hook
+# DEPLOY_HOOK_URL="https://api.vercel.com/v1/integrations/deploy/prj_xxx/xxx"
+
+# ==============================
+# BLOCKCHAIN CONFIGURATION
+# ==============================
+# Infura: infura.io → Votre projet → Sepolia → Copy RPC URL
+NEXT_PUBLIC_RPC_URL=https://sepolia.infura.io/v3/VOTRE_PROJECT_ID_INFURA
+RPC_URL=https://sepolia.infura.io/v3/VOTRE_PROJECT_ID_INFURA
+
+# Contract Address (Sepolia - déjà déployé)
+NEXT_PUBLIC_CONTRACT_ADDRESS=0x7b7C41cf5bc986F406c7067De6e69f200c27D63f
+CONTRACT_ADDRESS=0x7b7C41cf5bc986F406c7067De6e69f200c27D63f
+
+# Chain ID (Sepolia)
+NEXT_PUBLIC_CHAIN_ID=11155111
+CHAIN_ID=11155111
+
+# ==============================
+# SITE CONFIGURATION
+# ==============================
+# En local
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# En production (remplacez par votre vraie URL Vercel)
+# NEXT_PUBLIC_SITE_URL=https://votre-projet.vercel.app
+
+# ==============================
+# ETHERSCAN
+# ==============================
+NEXT_PUBLIC_ETHERSCAN_BASE_URL=https://sepolia.etherscan.io
+
+# ==============================
+# PRIVATE KEY (OPTIONNEL)
+# ==============================
+# ⚠️ Uniquement si vous avez besoin de transactions serveur
+# ⚠️ Ne jamais exposer côté client
+# PRIVATE_KEY=0xVOTRE_CLE_PRIVEE_METAMASK
+
+# ==============================
+# INSTRUCTIONS D'UTILISATION
+# ==============================
+# 
+# 1. CONFIGURATION LOCALE
+#    - Copiez ce fichier vers .env.local
+#    - Remplacez toutes les valeurs VOTRE_XXX
+#    - Testez avec: npm run dev
+# 
+# 2. CONFIGURATION SUPABASE
+#    - Créez un projet sur supabase.com
+#    - Récupérez le DSN et remplacez DATABASE_URL
+#    - Encodez les caractères spéciaux du mot de passe
+#    - Lancez: npm run supabase:wire
+# 
+# 3. CONFIGURATION VERCEL
+#    - Créez un token sur vercel.com/account/tokens
+#    - Récupérez le Project ID
+#    - Ajoutez VERCEL_TOKEN et VERCEL_PROJECT_ID ci-dessus
+#    - Lancez: npm run vercel:wire
+# 
+# 4. DÉPLOIEMENT
+#    - Toutes les variables seront poussées automatiquement
+#    - L'application sera redéployée
+#    - Testez sur votre URL Vercel
+# 
+# ==============================
