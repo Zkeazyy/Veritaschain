@@ -17,7 +17,10 @@
     "supabase:super": "tsx scripts/supabase-super.ts",
     "vercel:wire": "tsx scripts/vercel-wire.ts",
     "zero:verify": "tsx scripts/zero-verify.ts",
-    "zero:go": "tsx scripts/zero-go.ts"
+    "zero:go": "tsx scripts/zero-go.ts",
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",

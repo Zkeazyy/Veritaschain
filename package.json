@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "cd web && npm run dev",
     "build": "cd web && npm run build",
-    "start": "cd web && npm start"
+    "start": "cd web && npm start",
+    "vercel-build": "cd web && npm ci && npm run vercel-build",
+    "postinstall": "cd web && npm ci || true"
   },
   "workspaces": [
     "web",
