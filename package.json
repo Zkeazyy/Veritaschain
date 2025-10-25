@@ -15,6 +15,7 @@
     "db:studio": "prisma studio",
     "supabase:wire": "tsx scripts/supabase-wire.ts",
     "supabase:super": "tsx scripts/supabase-super.ts",
+    "supabase:setup": "tsx scripts/supabase-setup.ts",
     "vercel:wire": "tsx scripts/vercel-wire.ts",
     "zero:verify": "tsx scripts/zero-verify.ts",
     "zero:go": "tsx scripts/zero-go.ts",

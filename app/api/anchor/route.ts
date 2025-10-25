@@ -2,7 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createWalletClient, createPublicClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
+import { z } from 'zod';
 import contractABI from '@/lib/contractABI.json';
+
+// Schéma de validation Zod
+const anchorRequestSchema = z.object({
+  hash: z.string().regex(/^0x[0-9a-fA-F]{64}$/, 'Format de hash invalide: doit commencer par 0x et contenir exactement 64 caractères hexadécimaux'),
+  fileName: z.string().min(1, 'Le nom de fichier est requis').max(255, 'Le nom de fichier est trop long'),
+});
 
 /**
  * API Route pour ancrer un hash de document sur la blockchain
@@ -14,22 +21,20 @@ export async function POST(request: NextRequest) {
     console.log('🚀 Démarrage de l\'ancrage de document');
 
     const body = await request.json();
-    const { hash, fileName } = body;
-
-    // Validation basique
-    if (!hash || !fileName) {
+    
+    // Validation Zod
+    const validationResult = anchorRequestSchema.safeParse(body);
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Champs obligatoires manquants: hash et fileName sont requis' },
+        { 
+          error: 'Données invalides', 
+          details: validationResult.error.issues.map(e => e.message).join(', ')
+        },
         { status: 400 }
       );
     }
 
-    if (!/^0x[0-9a-fA-F]{64}$/.test(hash)) {
-      return NextResponse.json(
-        { error: 'Format de hash invalide: doit commencer par 0x et contenir exactement 64 caractères hexadécimaux' },
-        { status: 400 }
-      );
-    }
+    const { hash, fileName } = validationResult.data;
 
     console.log(`📄 Ancrage demandé pour: ${fileName}`);
     console.log(`🔐 Hash: ${hash}`);

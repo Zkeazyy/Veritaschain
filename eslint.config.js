@@ -1,8 +1,15 @@
-const { defineConfig } = require('eslint-define-config')
-
-module.exports = defineConfig({
+/** @type {import('eslint').Linter.Config} */
+module.exports = {
   extends: ['next/core-web-vitals'],
   rules: {
-    // Ajouter des règles personnalisées si nécessaire
+    // Règles personnalisées
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-explicit-any': 'warn',
   },
-})
+  ignorePatterns: [
+    'node_modules/',
+    '.next/',
+    'dist/',
+    'build/',
+  ],
+};

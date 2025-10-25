@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "documents" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY,
     "hash" TEXT NOT NULL,
     "fileName" TEXT NOT NULL,
     "fileSize" INTEGER,
@@ -8,32 +8,27 @@ CREATE TABLE "documents" (
     "txHash" TEXT NOT NULL,
     "author" TEXT NOT NULL,
     "timestamp" BIGINT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "documents_pkey" PRIMARY KEY ("id")
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "certificates" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY,
     "documentId" TEXT NOT NULL,
     "pdfUrl" TEXT,
     "qrCode" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "certificates_pkey" PRIMARY KEY ("id")
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "certificates_documentId_fkey" FOREIGN KEY ("documentId") REFERENCES "documents" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY,
     "email" TEXT,
     "ethereumAddress" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
 );
 
 -- CreateIndex
@@ -62,6 +57,3 @@ CREATE UNIQUE INDEX "users_ethereumAddress_key" ON "users"("ethereumAddress");
 
 -- CreateIndex
 CREATE INDEX "users_ethereumAddress_idx" ON "users"("ethereumAddress");
-
--- AddForeignKey
-ALTER TABLE "certificates" ADD CONSTRAINT "certificates_documentId_fkey" FOREIGN KEY ("documentId") REFERENCES "documents"("id") ON DELETE CASCADE ON UPDATE CASCADE;

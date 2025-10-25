@@ -12,6 +12,7 @@
   },
   "env": {
     "NEXT_PUBLIC_SITE_URL": "https://veritaschain.vercel.app",
+    "NEXT_PUBLIC_RPC_URL": "https://sepolia.infura.io/v3/adc27d09a5464d119b406fbcfe66805f",
     "NEXT_PUBLIC_CONTRACT_ADDRESS": "0x7b7C41cf5bc986F406c7067De6e69f200c27D63f",
     "NEXT_PUBLIC_CHAIN_ID": "11155111",
     "NEXT_PUBLIC_ETHERSCAN_BASE_URL": "https://sepolia.etherscan.io"

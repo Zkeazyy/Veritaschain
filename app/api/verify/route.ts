@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPublicClient, http } from 'viem';
 import { sepolia } from 'viem/chains';
+import { z } from 'zod';
 import contractABI from '@/lib/contractABI.json';
+
+// Schéma de validation Zod
+const verifyRequestSchema = z.object({
+  hash: z.string().regex(/^0x[0-9a-fA-F]{64}$/, 'Format de hash invalide: doit commencer par 0x et contenir exactement 64 caractères hexadécimaux'),
+});
 
 /**
  * POST /api/verify
@@ -10,22 +16,20 @@ import contractABI from '@/lib/contractABI.json';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { hash } = body;
-
-    // Validation basique
-    if (!hash) {
+    
+    // Validation Zod
+    const validationResult = verifyRequestSchema.safeParse(body);
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Champ obligatoire manquant: hash est requis' },
+        { 
+          error: 'Données invalides', 
+          details: validationResult.error.issues.map(e => e.message).join(', ')
+        },
         { status: 400 }
       );
     }
 
-    if (!/^0x[0-9a-fA-F]{64}$/.test(hash)) {
-      return NextResponse.json(
-        { error: 'Format de hash invalide: doit commencer par 0x et contenir exactement 64 caractères hexadécimaux' },
-        { status: 400 }
-      );
-    }
+    const { hash } = validationResult.data;
 
     const rpcUrl = process.env.RPC_URL || process.env.NEXT_PUBLIC_RPC_URL;
     const contractAddress = process.env.CONTRACT_ADDRESS || process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;

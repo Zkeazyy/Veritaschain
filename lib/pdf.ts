@@ -89,7 +89,7 @@ export async function generateCertificate(data: CertificateData): Promise<Buffer
     color: { dark: '#000000', light: '#FFFFFF' },
   });
   
-  // Création du PDF A4 (595 x 842)
+  // Création du PDF A4 (595 x 842) avec configuration minimale
   const doc = new PDFDocument({
     size: 'A4',
     margin: 50,

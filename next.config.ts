@@ -51,7 +51,7 @@ const nextConfig: NextConfig = {
 
   // Configuration ESLint
   eslint: {
-    ignoreDuringBuilds: true, // Temporairement ignoré pour le déploiement
+    ignoreDuringBuilds: true, // Temporairement pour éviter les warnings de configuration
   },
 
   // Configuration expérimentale
