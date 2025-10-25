@@ -29,7 +29,7 @@ const statusConfig = {
   },
   error: {
     icon: AlertCircle,
-    variant: "error" as const,
+    variant: "destructive" as const,
     defaultMessage: "Erreur",
   },
 };

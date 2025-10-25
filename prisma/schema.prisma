@@ -56,16 +56,55 @@ model Certificate {
   @@map("certificates")
 }
 
-// User model - optional for future authentication
+// User model - for authentication
 model User {
   id            String   @id @default(uuid())
-  email         String?  @unique
-  ethereumAddress String @unique
+  email         String   @unique
+  passwordHash  String?
+  name          String?
+  role          String   @default("USER") // USER | ADMIN
+  ethereumAddress String? @unique
   
   // Metadata
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  
   @@index([ethereumAddress])
   @@map("users")
+}
+
+// Account model - for OAuth providers
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// Session model - for NextAuth
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
 }

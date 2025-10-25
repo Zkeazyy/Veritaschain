@@ -22,6 +22,8 @@ VeritasChain est une **dApp (application décentralisée)** qui permet d'ancrer 
 - **Ancrage de documents** : PDF, DOCX, PNG supportés
 - **Vérification instantanée** : Upload ou hash direct
 - **Certificats PDF** : Génération automatique avec QR code
+- **Token VTS** : Veritas Token pour réductions automatiques
+- **Modules spécialisés** : RH, Comptabilité, Juridique, BTP
 - **Interface moderne** : Design professionnel avec Tailwind CSS + shadcn/ui
 - **Thème sombre/clair** : Support complet des préférences utilisateur
 - **Responsive** : Optimisé mobile-first
@@ -132,6 +134,140 @@ L'application sera disponible sur `http://localhost:3000`
 - Apprenez comment fonctionne l'ancrage blockchain
 - Comprenez la confidentialité garantie
 
+## 📋 Certificat PDF
+
+VeritasChain génère automatiquement des certificats PDF professionnels pour chaque document ancré.
+
+### Fonctionnalités du certificat
+- **ID unique** : Format `VERI-YYYYMMDD-XXXXX`
+- **Hash du document** : SHA-256 complet
+- **Détails blockchain** : Réseau, contrat, transaction
+- **QR code** : Vérification instantanée
+- **Horodatage UTC** : Date et heure précises
+- **Signature électronique** : Authentification VeritasChain
+
+### Génération via API
+```bash
+curl -X POST http://localhost:3000/api/certificates \
+  -H "Content-Type: application/json" \
+  -d '{
+    "hash": "0xba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+    "txHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+    "network": "sepolia",
+    "contractAddress": "0x7b7C41cf5bc986F406c7067De6e69f200c27D63f",
+    "issuerAddress": "0x1234567890123456789012345678901234567890",
+    "issuedTo": "Nom du bénéficiaire"
+  }'
+```
+
+**Réponse:** Fichier PDF téléchargeable avec nom `VeritasCertificate_VERI-20250120-ABC12.pdf`
+
+## 🔧 API Endpoints
+
+### POST /api/anchor
+Ancre un document sur la blockchain.
+
+**Body:**
+```json
+{
+  "hash": "0xba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+  "fileName": "document.pdf"
+}
+```
+
+**Réponse:**
+```json
+{
+  "txHash": "0x...",
+  "author": "0x...",
+  "timestamp": 1640995200
+}
+```
+
+### POST /api/verify
+Vérifie l'existence d'un hash sur la blockchain.
+
+**Body:**
+```json
+{
+  "hash": "0xba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+}
+```
+
+**Réponse (existe):**
+```json
+{
+  "exists": true,
+  "author": "0x...",
+  "timestamp": 1640995200,
+  "etherscanContractUrl": "https://sepolia.etherscan.io/address/0x...",
+  "etherscanTxUrl": "https://sepolia.etherscan.io/tx/0x..."
+}
+```
+
+**Réponse (n'existe pas):**
+```json
+{
+  "exists": false
+}
+```
+
+### POST /api/certificates
+Génère un certificat PDF d'ancrage blockchain.
+
+**Body:**
+```json
+{
+  "hash": "0xba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+  "txHash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+  "network": "sepolia",
+  "contractAddress": "0x7b7C41cf5bc986F406c7067De6e69f200c27D63f",
+  "issuerAddress": "0x1234567890123456789012345678901234567890",
+  "issuedTo": "Nom du bénéficiaire",
+  "issuedAt": "2025-01-20T12:00:00.000Z",
+  "appName": "VeritasChain",
+  "verifyBaseUrl": "https://seritaschain.vercel.app"
+}
+```
+
+**Réponse:** `application/pdf` - Fichier PDF téléchargeable
+
+**Headers:**
+- `Content-Disposition: attachment; filename="VeritasCertificate_VERI-20250120-ABC12.pdf"`
+- `X-Certificate-ID: VERI-20250120-ABC12`
+- `X-Generated-At: 2025-01-20T12:00:00.000Z`
+
+**Champs obligatoires:** `hash`, `txHash`, `network`, `contractAddress`
+**Champs optionnels:** `issuerAddress`, `issuedTo`, `issuedAt`, `appName`, `verifyBaseUrl`
+
+## 🪙 Token VTS - Veritas Token
+
+VeritasChain intègre un token ERC-20 **VTS (Veritas Token)** pour offrir des réductions automatiques aux détenteurs.
+
+### ✨ Fonctionnalités VTS
+- **Lecture seule** : Affichage du solde sans transaction
+- **Réductions automatiques** : -30% pour ≥ 500 VTS
+- **Interface intégrée** : Badge dans la navbar + cartes de solde
+- **Multi-réseaux** : Support Sepolia, Base, Polygon
+
+### 🔧 Configuration VTS
+```bash
+# Variables d'environnement requises
+NEXT_PUBLIC_VTS_CONTRACT_ADDRESS=0x<adresse_token>
+NEXT_PUBLIC_NETWORK=sepolia
+NEXT_PUBLIC_RPC_URL=https://sepolia.infura.io/v3/...
+```
+
+### 📍 Composants VTS
+- **`VtsBadge`** : Badge compact dans la navbar
+- **`VtsBalanceCard`** : Carte complète du solde
+- **`PriceWithDiscount`** : Prix avec réduction automatique
+
+### 🧪 Test VTS
+Visitez `/vts-test` pour tester tous les composants VTS avec un wallet connecté.
+
+📖 **Documentation complète** : [README_VTS.md](./README_VTS.md)
+
 ## 🛠️ Structure du projet
 
 ```
@@ -153,7 +289,11 @@ web/
 ├── lib/                   # Utilitaires et logique métier
 │   ├── blockchain.ts      # Interactions blockchain
 │   ├── hash.ts           # Calculs SHA-256
-│   ├── pdf.ts            # Génération PDF
+│   ├── pdf.ts            # Génération PDF (legacy)
+│   ├── pdf/              # Module PDF professionnel
+│   │   ├── certificate.ts # Générateur de certificats
+│   │   └── types.ts      # Types pour certificats
+│   ├── qr.ts             # Génération QR codes
 │   ├── web3.ts           # Intégration MetaMask
 │   └── config.ts         # Configuration centralisée
 ├── styles/               # Styles globaux
@@ -178,7 +318,7 @@ web/
 ### Backend
 - **Next.js API Routes** - API serverless
 - **Zod** - Validation de schémas
-- **PDFKit** - Génération PDF
+- **pdf-lib** - Génération PDF professionnelle
 - **QRCode** - Génération QR codes
 
 ### Outils

@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, Button, Input, Alert, LoadingSpinner } from '@/components/ui';
+import DownloadCertificateButton from '@/components/DownloadCertificateButton';
 
 type VerifyOk = {
   exists: true;
@@ -57,20 +58,35 @@ function VerifyContent() {
 
     try {
       setLoading(true);
+      console.log('[Verify] Vérification du hash:', hash);
+      
       const res = await fetch('/api/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ hash }),
       });
+      
       const data = await res.json();
+      console.log('[Verify] Réponse API:', data);
+      
       if (!res.ok) {
         if (res.status === 503) {
           throw new Error('Réseau indisponible, réessayez dans quelques instants');
         }
         throw new Error(data.error || 'Erreur lors de la vérification');
       }
+      
       setResult(data as VerifyOk | VerifyKo);
+      
+      // Log du résultat pour debug
+      if (data.exists) {
+        console.log('[Verify] ✅ Hash trouvé:', data);
+      } else {
+        console.log('[Verify] ❌ Hash non trouvé');
+      }
+      
     } catch (e) {
+      console.error('[Verify] Erreur:', e);
       setError(e instanceof Error ? e.message : 'Erreur lors de la vérification');
     } finally {
       setLoading(false);
@@ -96,7 +112,7 @@ function VerifyContent() {
         </div>
 
         {error && (
-          <Alert variant="error" className="mb-6">{error}</Alert>
+          <Alert variant="destructive" className="mb-6">{error}</Alert>
         )}
 
         <Card>
@@ -139,8 +155,17 @@ function VerifyContent() {
                   <div className="break-all font-mono text-xs p-2 bg-gray-50 border rounded">
                     {hash}
                   </div>
-                  <div>
+                  <div className="flex gap-2">
                     <Button variant="secondary" onClick={onCopy}>{copied ? 'Copié !' : 'Copier le hash'}</Button>
+                    <DownloadCertificateButton
+                      hash={hash}
+                      txHash={result.etherscanTxUrl ? result.etherscanTxUrl.split('/tx/')[1] || '' : ''}
+                      network="sepolia"
+                      contractAddress="0x7b7C41cf5bc986F406c7067De6e69f200c27D63f"
+                      issuerAddress={result.author}
+                      variant="outline"
+                      size="sm"
+                    />
                   </div>
                 </div>
               </div>

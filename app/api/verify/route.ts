@@ -3,6 +3,7 @@ import { createPublicClient, http } from 'viem';
 import { sepolia } from 'viem/chains';
 import { z } from 'zod';
 import contractABI from '@/lib/contractABI.json';
+import { isChainEnabled, isMockMode, logMockMode, getNetworkName } from '@/lib/server/featureFlags';
 
 // Schéma de validation Zod
 const verifyRequestSchema = z.object({
@@ -30,6 +31,24 @@ export async function POST(request: NextRequest) {
     }
 
     const { hash } = validationResult.data;
+
+    // Mode mock si blockchain désactivée
+    if (!isChainEnabled() || isMockMode()) {
+      logMockMode(`Vérification simulée pour hash ${hash}`);
+      
+      const mockResult = {
+        ok: true,
+        anchored: true,
+        blockNumber: 123456,
+        network: getNetworkName(),
+        author: '0x' + '0'.repeat(40),
+        timestamp: Math.floor(Date.now() / 1000),
+      };
+      
+      return NextResponse.json(mockResult, {
+        headers: { 'X-Mode': 'mock' },
+      });
+    }
 
     const rpcUrl = process.env.RPC_URL || process.env.NEXT_PUBLIC_RPC_URL;
     const contractAddress = process.env.CONTRACT_ADDRESS || process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;

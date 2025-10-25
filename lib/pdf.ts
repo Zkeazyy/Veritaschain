@@ -89,14 +89,17 @@ export async function generateCertificate(data: CertificateData): Promise<Buffer
     color: { dark: '#000000', light: '#FFFFFF' },
   });
   
-  // Création du PDF A4 (595 x 842) avec configuration minimale
+  // Création du PDF A4 (595 x 842) avec configuration robuste
   const doc = new PDFDocument({
     size: 'A4',
     margin: 50,
+    autoFirstPage: true,
     info: {
       Title: 'Certificat VeritasChain',
       Author: 'VeritasChain',
       Subject: "Certificat d'Ancrage Blockchain",
+      Creator: 'VeritasChain v1.0',
+      Producer: 'VeritasChain PDF Generator',
     },
   });
   

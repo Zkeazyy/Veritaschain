@@ -112,9 +112,9 @@ export function useWeb3Wallet() {
 
 // Fonction pour ancrer un document avec MetaMask
 export async function anchorDocumentWithWallet(
-  hash: Hex,
+  hash: any,
   fileName: string,
-  walletAddress: AddressHex
+  walletAddress: any
 ): Promise<AnchorResult> {
   if (typeof window === 'undefined' || !window.ethereum) {
     throw new Error('MetaMask non détecté');
@@ -122,7 +122,7 @@ export async function anchorDocumentWithWallet(
 
   // Créer le client wallet avec MetaMask
   const walletClient = createWalletClient({
-    account: walletAddress,
+    account: walletAddress as AddressHex,
     chain: sepolia,
     transport: http(config.rpcUrl),
   });

@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Card, Button, Input, Alert, LoadingSpinner } from '@/components/ui';
 import { sha256HexBrowser } from '@/lib/hash';
-import { useWeb3Wallet, anchorDocumentWithWallet, generateCertificatePDF } from '@/lib/web3';
+import { useWeb3Wallet, anchorDocumentWithWallet } from '@/lib/web3';
+import DownloadCertificateButton from '@/components/DownloadCertificateButton';
 
 interface AnchorResult {
   txHash: string;
@@ -18,7 +19,6 @@ export default function AnchorPage() {
   const [hash, setHash] = useState('');
   const [isCalculatingHash, setIsCalculatingHash] = useState(false);
   const [isAnchoring, setIsAnchoring] = useState(false);
-  const [isGeneratingCert, setIsGeneratingCert] = useState(false);
   const [anchorResult, setAnchorResult] = useState<AnchorResult | null>(null);
   const [toastSuccess, setToastSuccess] = useState('');
   const [toastError, setToastError] = useState('');
@@ -80,27 +80,6 @@ export default function AnchorPage() {
     }
   };
 
-  const onDownloadCertificate = async () => {
-    if (!anchorResult || !fileName || !hash) return;
-    try {
-      setIsGeneratingCert(true);
-      setToastError('');
-      
-      await generateCertificatePDF(
-        fileName,
-        hash as `0x${string}`,
-        anchorResult.txHash as `0x${string}`,
-        anchorResult.author as `0x${string}`,
-        anchorResult.timestamp
-      );
-      
-      setToastSuccess('Certificat téléchargé avec succès.');
-    } catch (e) {
-      setToastError(e instanceof Error ? e.message : "Erreur lors de la génération du certificat");
-    } finally {
-      setIsGeneratingCert(false);
-    }
-  };
 
   const reset = () => {
     setFile(null);
@@ -121,7 +100,7 @@ export default function AnchorPage() {
         </div>
 
         {toastError && (
-          <Alert variant="error" className="mb-6">{toastError}</Alert>
+          <Alert variant="destructive" className="mb-6">{toastError}</Alert>
         )}
         {toastSuccess && (
           <Alert variant="success" className="mb-6">{toastSuccess}</Alert>
@@ -176,7 +155,7 @@ export default function AnchorPage() {
                     🔗 Connecter MetaMask
                   </Button>
                   {walletError && (
-                    <Alert variant="error" className="text-sm">{walletError}</Alert>
+                    <Alert variant="destructive" className="text-sm">{walletError}</Alert>
                   )}
                 </div>
               ) : (
@@ -212,18 +191,18 @@ export default function AnchorPage() {
                 </div>
               )}
 
-              <Button
-                onClick={onDownloadCertificate}
-                disabled={!anchorResult || isGeneratingCert}
-                variant="secondary"
-                className="w-full"
-              >
-                {isGeneratingCert ? (
-                  <span className="inline-flex items-center"><LoadingSpinner size="sm" className="mr-2"/>Génération du certificat...</span>
-                ) : (
-                  'Télécharger le certificat'
-                )}
-              </Button>
+              {anchorResult && (
+                <DownloadCertificateButton
+                  hash={hash}
+                  txHash={anchorResult.txHash}
+                  network="sepolia"
+                  contractAddress="0x7b7C41cf5bc986F406c7067De6e69f200c27D63f"
+                  issuerAddress={anchorResult.author}
+                  issuedTo={fileName}
+                  className="w-full"
+                  variant="secondary"
+                />
+              )}
 
               {(file || anchorResult) && (
                 <Button onClick={reset} variant="secondary" className="w-full">Recommencer</Button>

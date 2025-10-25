@@ -13,7 +13,14 @@ export async function GET() {
       status: 'OK',
       message: 'API PDF fonctionnelle',
       timestamp: new Date().toISOString(),
-      database: 'SQLite connectée'
+      database: 'SQLite connectée',
+      features: {
+        upload: '✅ Fonctionnel',
+        hash: '✅ SHA-256 calculé côté client',
+        verify: '✅ Page /verify opérationnelle',
+        blockchain: '⚠️ Nécessite MetaMask + ETH Sepolia',
+        pdf: '🔧 En cours de correction'
+      }
     };
 
     return NextResponse.json(testData, { status: 200 });

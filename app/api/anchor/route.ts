@@ -4,6 +4,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 import { z } from 'zod';
 import contractABI from '@/lib/contractABI.json';
+import { isChainEnabled, isMockMode, logMockMode, getNetworkName } from '@/lib/server/featureFlags';
 
 // Schéma de validation Zod
 const anchorRequestSchema = z.object({
@@ -38,6 +39,23 @@ export async function POST(request: NextRequest) {
 
     console.log(`📄 Ancrage demandé pour: ${fileName}`);
     console.log(`🔐 Hash: ${hash}`);
+
+    // Mode mock si blockchain désactivée
+    if (!isChainEnabled() || isMockMode()) {
+      logMockMode(`Ancrage simulé pour ${fileName}`, { hash });
+      
+      const mockResult = {
+        ok: true,
+        txHash: '0x' + '0'.repeat(64),
+        network: getNetworkName(),
+        author: '0x' + '0'.repeat(40),
+        timestamp: Math.floor(Date.now() / 1000),
+      };
+      
+      return NextResponse.json(mockResult, {
+        headers: { 'X-Mode': 'mock' },
+      });
+    }
 
     // Vérification des variables d'environnement
     const privateKey = process.env.PRIVATE_KEY;
