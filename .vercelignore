@@ -1,0 +1,49 @@
+# .vercelignore
+# Fichiers et dossiers à ignorer lors du déploiement Vercel
+
+# Module VTS Token (monorepo séparé)
+vts-token/
+
+# Documentation temporaire
+ENV_*.md
+README_*.md
+PR2_*.md
+TESTS_*.md
+
+# Certificats de test
+certificate_*.pdf
+test-certificate.pdf
+
+# Cache et builds locaux
+.next/
+node_modules/
+dist/
+build/
+veritaschain/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environnement local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git
+.git/
+.gitignore
+
+# Vercel
+.vercel/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

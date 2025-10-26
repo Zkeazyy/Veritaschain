@@ -3,6 +3,9 @@
 
 'use client';
 
+// Force le rechargement dynamique sur Vercel
+export const dynamic = 'force-dynamic';
+
 import * as React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';

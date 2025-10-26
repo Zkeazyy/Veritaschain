@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MODULE_CONFIGS } from "@/lib/feature-flags";
 
+// Force le rechargement dynamique sur Vercel
+export const dynamic = 'force-dynamic';
+
 export default function HomePage() {
   // Filtrer les modules selon les feature flags
   const enabledModules = Object.entries(MODULE_CONFIGS)
